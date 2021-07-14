@@ -2,6 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API.Extentions;
+using Application.Activities;
+using Application.Core;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -31,20 +35,7 @@ namespace API
         {
 
             services.AddControllers();
-            
-            services.AddDbContext<DataContext>(opt =>
-            {
-                opt.UseSqlite(this.config.GetConnectionString("DefaultConnection"));
-            });
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
-            });
-            services.AddCors(opt=>{
-                opt.AddPolicy("CorsPolicy",policy=>{
-                    policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000");
-                });
-            });
+            services.AddApplicationServices(config);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
