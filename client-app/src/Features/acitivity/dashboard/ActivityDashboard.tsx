@@ -1,50 +1,32 @@
+import { observer } from "mobx-react-lite";
 import React from "react";
 import { Grid } from "semantic-ui-react";
-import {Activity} from '../../../App/models/activity';
+import { useStore } from "../../../App/stores/store";
 import ActivityDetails from "../details/ActivityDetails";
 import ActivityForm from "../form/ActivityForm";
 import ActivityList from "./ActivityList";
 
-interface Props{
-    activities:Activity[];
-    selectedActivity:Activity | undefined;
-    selectActivity:(id:string)=>void;
-    cancelSelectActivity:()=>void;
-    editMode:boolean;
-    openForm:(id:string)=>void;
-    closeForm:()=>void;
-    createoredit:(activity:Activity)=>void;
-    deleteactivity:(id:string)=>void;
-    submitting:boolean;
-}
-export default function ActivityDashboard({submitting,deleteactivity,activities,selectActivity,selectedActivity,cancelSelectActivity,closeForm,openForm,editMode,createoredit}:Props ) {
+export default observer( function ActivityDashboard() {
 
-
+    const{activityStore}=useStore();
+    const{selectedActivity,editMode}=activityStore;
     return (
         <Grid>
             <Grid.Column width='10'>
-               <ActivityList activities={activities} 
-               selectActivity={selectActivity}
-               deleteactivity={deleteactivity}
-               submitting={submitting}
+               <ActivityList  
+               
                />
             </Grid.Column>
             <Grid.Column width='6'>
                 {selectedActivity && !editMode &&
-                <ActivityDetails 
-                activity={selectedActivity} 
-                cancelSelectedActivity={cancelSelectActivity}
-                openForm={openForm}
+                <ActivityDetails                 
                 />}
                 {editMode &&
                 <ActivityForm
-                closeForm={closeForm}
-                activity={selectedActivity}
-                createoredit={createoredit}
-                submitting={submitting}
                 />
                 }
             </Grid.Column>
         </Grid>
     )
 }
+)
