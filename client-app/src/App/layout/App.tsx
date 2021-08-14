@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment,useEffect } from 'react';
 import { Container } from 'semantic-ui-react';
 import Navbar from './Navbar';
 import ActivityDashboard from '../../Features/acitivity/dashboard/ActivityDashboard'
@@ -11,13 +11,31 @@ import TestErrors from '../../Features/errors/TestError';
 import { ToastContainer } from 'react-toastify';
 import NotFound from '../../Features/errors/NotFound';
 import ServerError from '../../Features/errors/serverError';
+import LoginForm from '../../Features/users/LoginForm';
+import { useStore } from '../stores/store';
+import LoadingComponent from './LoadingComponent';
+import ModalContainer from '../common/modals/ModalContainer';
 function App() {
 
   const location=useLocation();
+  const {commonStore,userStore}=useStore();
 
+  useEffect(() => {
+   
+    if(commonStore.token){
+      userStore.getUser().finally(()=>commonStore.setAppLoaded());
+
+    }
+    else{
+      commonStore.setAppLoaded();
+    }
+  }, [commonStore,userStore])
+
+  if(!commonStore.appLoaded) return <LoadingComponent content='Loading app ...'/>
   return (
     <Fragment >
       <ToastContainer position='bottom-right' hideProgressBar />
+      <ModalContainer />
       <Route exact path='/' component={HomePage}/>
       <Route 
       path={'/(.+)'}
@@ -31,7 +49,7 @@ function App() {
        <Route key={location.key}  exact path={['/createactivity','/manage/:id']} component={ActivityForm}/>
       <Route path='/errors' component={TestErrors}/>
       <Route path='/server-error' component={ServerError}/>
-
+      <Route path='/login' component={LoginForm}/>
       <Route component={NotFound}/>
       </Switch>
       </Container>
